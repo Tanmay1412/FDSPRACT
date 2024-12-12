@@ -1,0 +1,115 @@
+Write program to implement a priority queue in C++ using an inorder list to store the items in the queue.
+Create a class that includes the data items (which should betemplate) and the priority (which should be int).
+The inorder list should contain these objects,with operator<= overloadedsothatthe items with highest priority appearnat the
+start of the list (which will make it relatively easy to retrieve the highest item.)
+#include <iostream>
+#include <list>
+#include <string>
+using namespace std;
+
+// Template class for PriorityQueueItem
+template <typename T>
+class PriorityQueueItem {
+public:
+    T data;
+    int priority;
+
+    PriorityQueueItem(T d, int p) : data(d), priority(p) {}
+
+    // Overload the <= operator to compare priorities
+    bool operator<=(const PriorityQueueItem& other) const {
+        return this->priority >= other.priority; // Higher priority first
+    }
+};
+
+// Priority Queue class
+template <typename T>
+class PriorityQueue {
+private:
+    list<PriorityQueueItem<T>> queue;
+
+public:
+    // Function to insert an item into the queue
+    void insert(T data, int priority) {
+        PriorityQueueItem<T> newItem(data, priority);
+        auto it = queue.begin();
+        while (it != queue.end() && *it <= newItem) {
+            ++it;
+        }
+        queue.insert(it, newItem);
+    }
+
+    // Function to remove the highest-priority item
+    void pop() {
+        if (!queue.empty()) {
+            queue.pop_front();
+        } else {
+            cout << "Queue is empty!" << endl;
+        }
+    }
+
+    // Function to get the highest-priority item
+    T top() {
+        if (!queue.empty()) {
+            return queue.front().data;
+        } else {
+            throw runtime_error("Queue is empty!");
+        }
+    }
+
+    // Function to display the queue
+    void display() {
+        for (auto& item : queue) {
+            cout << "Data: " << item.data << ", Priority: " << item.priority << endl;
+        }
+    }
+};
+
+int main() {
+    PriorityQueue<string> pq;
+    int choice;
+
+    do {
+        cout << "\nPriority Queue Menu:\n";
+        cout << "1. Insert an item\n";
+        cout << "2. Remove the highest-priority item\n";
+        cout << "3. Get the highest-priority item\n";
+        cout << "4. Display the queue\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1: {
+            string data;
+            int priority;
+            cout << "Enter data: ";
+            cin >> data;
+            cout << "Enter priority: ";
+            cin >> priority;
+            pq.insert(data, priority);
+            break;
+        }
+        case 2:
+            pq.pop();
+            break;
+        case 3:
+            try {
+                cout << "Highest-priority item: " << pq.top() << endl;
+            } catch (const exception& e) {
+                cout << e.what() << endl;
+            }
+            break;
+        case 4:
+            pq.display();
+            break;
+        case 5:
+            cout << "Exiting program." << endl;
+            break;
+        default:
+            cout << "Invalid choice!" << endl;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
