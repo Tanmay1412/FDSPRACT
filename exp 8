@@ -1,0 +1,155 @@
+Write C++ program  for storing binary number using doubly linked lists . Write functions- 
+a)	To compute 1‘s and 2‘s  complement 
+b)	Add two binary numbers
+
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Node structure for the doubly linked list
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+};
+
+// Function to insert a node at the end of the list
+void insert(Node*& head, int value) {
+    Node* newNode = new Node{value, nullptr, nullptr};
+    if (!head) {
+        head = newNode;
+        return;
+    }
+    Node* temp = head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+// Function to display the binary number
+void display(Node* head) {
+    Node* temp = head;
+    while (temp) {
+        cout << temp->data;
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+// Function to compute 1's complement
+void onesComplement(Node* head) {
+    Node* temp = head;
+    while (temp) {
+        temp->data = temp->data == 0 ? 1 : 0;
+        temp = temp->next;
+    }
+}
+
+// Function to compute 2's complement
+void twosComplement(Node* head) {
+    onesComplement(head);
+    Node* temp = head;
+    Node* tail = nullptr;
+
+    // Move to the last node
+    while (temp->next) {
+        temp = temp->next;
+    }
+    tail = temp;
+
+    // Add 1 to the binary number from the end
+    int carry = 1;
+    while (tail) {
+        int sum = tail->data + carry;
+        tail->data = sum % 2;
+        carry = sum / 2;
+        tail = tail->prev;
+    }
+}
+
+// Function to add two binary numbers
+Node* addBinary(Node* head1, Node* head2) {
+    Node* result = nullptr;
+    Node* temp1 = head1;
+    Node* temp2 = head2;
+
+    // Move to the last nodes of both lists
+    while (temp1->next) {
+        temp1 = temp1->next;
+    }
+    while (temp2->next) {
+        temp2 = temp2->next;
+    }
+
+    int carry = 0;
+
+    // Add the binary numbers from the end
+    while (temp1 || temp2 || carry) {
+        int sum = carry;
+        if (temp1) {
+            sum += temp1->data;
+            temp1 = temp1->prev;
+        }
+        if (temp2) {
+            sum += temp2->data;
+            temp2 = temp2->prev;
+        }
+        insert(result, sum % 2);
+        carry = sum / 2;
+    }
+
+    // Reverse the result list to get the correct order
+    Node* reversedResult = nullptr;
+    while (result) {
+        insert(reversedResult, result->data);
+        result = result->next;
+    }
+
+    return reversedResult;
+}
+
+int main() {
+    Node* binary1 = nullptr;
+    Node* binary2 = nullptr;
+
+    string input1, input2;
+
+    cout << "Enter the first binary number: ";
+    cin >> input1;
+    for (char ch : input1) {
+        insert(binary1, ch - '0');
+    }
+
+    cout << "Enter the second binary number: ";
+    cin >> input2;
+    for (char ch : input2) {
+        insert(binary2, ch - '0');
+    }
+
+    cout << "\nFirst binary number: ";
+    display(binary1);
+
+    cout << "\nSecond binary number: ";
+    display(binary2);
+
+    // Compute 1's complement of the first binary number
+    onesComplement(binary1);
+    cout << "\n1's Complement of first binary number: ";
+    display(binary1);
+
+    // Compute 2's complement of the first binary number
+    twosComplement(binary1);
+    cout << "2's Complement of first binary number: ";
+    display(binary1);
+
+    // Add two binary numbers
+    Node* result = addBinary(binary1, binary2);
+    cout << "\nSum of the two binary numbers: ";
+    display(result);
+
+    return 0;
+}
