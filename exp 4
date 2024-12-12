@@ -1,0 +1,100 @@
+
+04	a)	Write a Python program to store roll numbers of student in array who attended training program in random order.
+Write function for searching whether particular student attended training program or not, using Linear search and Sentinel search.
+b)	Write a Python program to store roll numbers of student array who attended training program in sorted order.
+Write function for searching whether particular student attended training program or not, using Binary search and Fibonacci search	C 1	25/07/2024		
+
+
+
+
+
+# Part (a): Linear and Sentinel search on unsorted array
+def linear_search(arr, key):
+    """Linear Search Algorithm"""
+    for i in range(len(arr)):
+        if arr[i] == key:
+            return i  # Return the index if found
+    return -1  # Return -1 if not found
+
+def sentinel_search(arr, key):
+    """Sentinel Search Algorithm"""
+    n = len(arr)
+    last = arr[-1]  # Store the last element
+    arr[-1] = key  # Place the key at the last position
+
+    i = 0
+    while arr[i] != key:
+        i += 1
+
+    arr[-1] = last  # Restore the last element
+
+    if i < n - 1 or arr[-1] == key:
+        return i  # Return the index if found
+    return -1  # Return -1 if not found
+
+# Example for Part (a)
+roll_numbers_unsorted = list(map(int, input("Enter roll numbers (unsorted) separated by space: ").split()))
+key_to_search = int(input("Enter the roll number to search: "))
+
+# Linear Search
+index = linear_search(roll_numbers_unsorted, key_to_search)
+print("Linear Search:", "Found at index", index if index != -1 else "Not Found")
+
+# Sentinel Search
+index = sentinel_search(roll_numbers_unsorted, key_to_search)
+print("Sentinel Search:", "Found at index", index if index != -1 else "Not Found")
+
+# Part (b): Binary Search and Fibonacci Search on sorted array
+def binary_search(arr, key):
+    """Binary Search Algorithm"""
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == key:
+            return mid  # Return the index if found
+        elif arr[mid] < key:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1  # Return -1 if not found
+
+def fibonacci_search(arr, key):
+    """Fibonacci Search Algorithm"""
+    n = len(arr)
+    fib2 = 0  # (m-2)'th Fibonacci number
+    fib1 = 1  # (m-1)'th Fibonacci number
+    fib = fib2 + fib1  # m'th Fibonacci number
+
+    while fib < n:
+        fib2, fib1 = fib1, fib
+        fib = fib2 + fib1
+
+    offset = -1
+
+    while fib > 1:
+        i = min(offset + fib2, n - 1)
+
+        if arr[i] < key:
+            fib, fib1, fib2 = fib1, fib2, fib - fib1
+            offset = i
+        elif arr[i] > key:
+            fib, fib1, fib2 = fib2, fib1 - fib2, fib - fib1
+        else:
+            return i  # Return the index if found
+
+    if fib1 and offset + 1 < n and arr[offset + 1] == key:
+        return offset + 1  # Return the index if found
+
+    return -1  # Return -1 if not found
+
+# Example for Part (b)
+roll_numbers_sorted = list(map(int, input("Enter roll numbers (sorted) separated by space: ").split()))
+key_to_search = int(input("Enter the roll number to search: "))
+
+# Binary Search
+index = binary_search(roll_numbers_sorted, key_to_search)
+print("Binary Search:", "Found at index", index if index != -1 else "Not Found")
+
+# Fibonacci Search
+index = fibonacci_search(roll_numbers_sorted, key_to_search)
+print("Fibonacci Search:", "Found at index", index if index != -1 else "Not Found")
